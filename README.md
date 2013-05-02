@@ -46,9 +46,12 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Change History
 
-1.0.12 : ????, 2013
+1.0.12 : May 2, 2013
 
 * Adds the background image gallery feature on Rails and GAE web apps. Have fun!
+* GAE example web app now supports App Engine SDK 1.7.7.1
+* Adds the login page to the GAE example web app in order to provide links to loign/logout
+* Adds a new example app using Arduino, sensors and Android (3.1+)
 
 1.0.11 : April 2, 2013
 
