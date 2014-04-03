@@ -1,7 +1,7 @@
 /*
  * LEGAL NOTICE
  *
- * Copyright (C) 2013 InventIt Inc. All rights reserved.
+ * Copyright (C) 2014 InventIt Inc. All rights reserved.
  *
  * This source code, product and/or document is public under licenses 
  * restricting its use, copying, distribution, and decompilation.
