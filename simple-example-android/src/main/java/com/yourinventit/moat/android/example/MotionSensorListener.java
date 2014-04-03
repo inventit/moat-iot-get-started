@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 InventIt Inc.
+ * Copyright (C) 2014 InventIt Inc.
  * 
  * See https://github.com/inventit/moat-iot-get-started
  */
