@@ -21,9 +21,10 @@ import android.os.Looper;
 import android.widget.Toast;
 
 import com.yourinventit.dmc.api.moat.ContextFactory;
+import com.yourinventit.dmc.api.moat.DoneCallback;
 import com.yourinventit.dmc.api.moat.Moat;
 import com.yourinventit.dmc.api.moat.android.MoatAndroidFactory;
-import com.yourinventit.dmc.api.moat.android.MoatAndroidFactory.Callback;
+import com.yourinventit.dmc.api.moat.android.MoatInitResult;
 
 /**
  * 
@@ -117,21 +118,21 @@ public class MoatIoTService extends Service {
 		}
 
 		// Initializing MOAT object asynchronously
-		MoatAndroidFactory.getInstance().initMoat(token, context,
-				new Callback() {
+		MoatAndroidFactory.getInstance().initMoat(token, context)
+				.then(new DoneCallback<MoatInitResult, Throwable>() {
 					/**
 					 * This method will be invoked when the initialization is
 					 * successfully terminated.
-					 * 
-					 * @see com.yourinventit.dmc.api.moat.android.MoatAndroidFactory.Callback#onInitialized(com.yourinventit.dmc.api.moat.Moat,
-					 *      java.lang.String)
 					 */
-					public void onInitialized(Moat moat, String urnPrefix) {
+					public void onSuccess(MoatInitResult result) {
 						LOGGER.info("onCreate(): OK! MOAT initialization is successful.");
 						if (databaseHelper == null) {
 							throw new IllegalStateException(
 									"Inconsistent State. Re-start the app.");
 						}
+						final Moat moat = result.getMoat();
+						final String urnPrefix = result.getUrnPrefix();
+
 						// Holding the passed moat instance
 						MoatIoTService.this.moat = moat;
 
@@ -143,17 +144,13 @@ public class MoatIoTService extends Service {
 						final ShakeEventModelMapper shakeEventModelMapper = new ShakeEventModelMapper(
 								databaseHelper.getShakeEventDao(),
 								databaseHelper.getConnectionSource());
-						moat.registerModel(MotionSensorListener.getMoatUrn(
-								urnPrefix, "ShakeEvent", "1.0"),
-								ShakeEvent.class, shakeEventModelMapper,
-								contextFactory);
+						moat.registerModel(ShakeEvent.class,
+								shakeEventModelMapper, contextFactory);
 						LOGGER.info("onCreate(): ShakeEvent has been registered.");
 
 						// Registering VibrationDevice model
 						final VibrationDevice vibrationDevice = new VibrationDevice();
 						moat.registerModel(
-								MotionSensorListener.getMoatUrn(urnPrefix,
-										"VibrateDevice", "1.0"),
 								VibrationDevice.class,
 								new VibrationDeviceModelMapper(vibrationDevice),
 								contextFactory);
@@ -179,22 +176,21 @@ public class MoatIoTService extends Service {
 					 * This method will be invoked when unexpected exception
 					 * occurs during initialization process.
 					 * 
-					 * @see com.yourinventit.dmc.api.moat.android.MoatAndroidFactory.Callback#onThrowable(java.lang.Throwable)
+					 * @param cause
 					 */
-					public void onThrowable(final Throwable throwable) {
-						LOGGER.error("onCreate(): ERROR!!!!!!!!!!.", throwable);
+					public void onFailure(final Throwable cause) {
+						LOGGER.error("onCreate(): ERROR!!!!!!!!!!.", cause);
 						Looper.prepare();
 						new Handler(getMainLooper()).post(new Runnable() {
 							public void run() {
 								Toast.makeText(
 										getApplicationContext(),
 										"Exception Occured. Failed to initMoat!:"
-												+ throwable.getMessage(),
+												+ cause.getMessage(),
 										Toast.LENGTH_LONG).show();
 							}
 						});
 					}
-
 				});
 	}
 
