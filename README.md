@@ -46,6 +46,15 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Change History
 
+1.1.0 : June 26, 2014
+
+* Modifies Android sample apps as MOAT Java/Android API is updated
+
+1.0.13 : April 3, 2014
+
+* Updates maven android plugin
+* Fixes copyright year and dead links
+
 1.0.12 : May 2, 2013
 
 * Adds the background image gallery feature on Rails and GAE web apps. Have fun!

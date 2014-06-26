@@ -30,17 +30,6 @@
             android:name=".MoatIoTService"
             android:exported="false" />
 
-        <!-- This class is included in the Inventit ServiceSync Android Library -->
-        <service
-            android:name="com.yourinventit.dmc.api.moat.android.MoatClientEndpoint"
-            android:exported="true"
-            android:permission="com.yourinventit.servicesync.android.permission.MOAT_ANDROID" >
-            <intent-filter>
-
-                <!-- The name should be 'package' + '.MOAT_CLIENT' -->
-                <action android:name="com.yourinventit.moat.android.example.MOAT_CLIENT" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

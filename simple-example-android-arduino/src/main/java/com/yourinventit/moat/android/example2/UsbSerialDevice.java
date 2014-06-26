@@ -24,7 +24,8 @@ import android.hardware.usb.UsbManager;
 
 import com.hoho.android.usbserial.driver.UsbSerialDriver;
 import com.hoho.android.usbserial.driver.UsbSerialProber;
-import com.yourinventit.moat.android.example2.SerialInputOutputManager.Listener;
+import com.hoho.android.usbserial.util.SerialInputOutputManager;
+import com.hoho.android.usbserial.util.SerialInputOutputManager.Listener;
 
 /**
  * 
@@ -95,19 +96,22 @@ public class UsbSerialDevice {
 		if (this.usbSerialDriver != null) {
 			return true;
 		}
-		UsbSerialDriver usbSerialDriver = UsbSerialProber.acquire(usbManager);
+		UsbSerialDriver usbSerialDriver = UsbSerialProber.findFirstDevice(usbManager);
 		try {
 			stopSerialInputOutputManager();
 			if (usbSerialDriver != null) {
 				usbSerialDriver.open();
-				usbSerialDriver.setBaudRate(BAUD_RATE);
+				usbSerialDriver.setParameters(BAUD_RATE,
+						UsbSerialDriver.DATABITS_8, UsbSerialDriver.STOPBITS_1,
+						UsbSerialDriver.PARITY_NONE);
 			}
-
-		} catch (IOException exception) {
-			usbSerialDriver = null;
-
-		} finally {
 			this.usbSerialDriver = usbSerialDriver;
+			startSerialInputOutputManager();
+		} catch (RuntimeException exception) {
+			this.usbSerialDriver = null;
+			throw exception;
+		} catch (IOException exception) {
+			this.usbSerialDriver = null;
 			startSerialInputOutputManager();
 		}
 		return usbSerialDriver != null;
