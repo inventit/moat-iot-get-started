@@ -5,15 +5,13 @@ Simple Example Android with Arduino Application
 
 This application requires the following private library:
 
-- inventit-dmc-android-lib-api-4.0.0-prod.jar
+- inventit-dmc-android-lib-api-4.1.0-prod.jar
 
 You can download it via [iidn command line tool](https://github.com/inventit/iidn-cli) (signup required).
 
-And it also requires the following LGPL library:
+And it also requires the following LGPL library (already bundled in the project):
 
-- usb-serial-for-android-v010.jar
-
-You can get it from [usb-serial-for-android](https://code.google.com/p/usb-serial-for-android/downloads/list) site and put it into `libs/com/hoho/usb-serial-for-android/v010` directory.
+- usb-serial-for-android-v0.1.0-5c8a655-inventit-0.1.0.jar
 
 The following APK must be installed into a device where this application runs.
 
@@ -21,7 +19,7 @@ The following APK must be installed into a device where this application runs.
 
 You can get it from [Goole Play](https://play.google.com/store/search?q=inventit+service-sync&c=apps) for free.
 
-See [the tutorial](http://dev.yourinventit.com/guides/get-started) to learn more.
+See [the tutorial](http://dev.inventit.io/guides/get-started.html) to learn more.
 
 The directory structure of this application is as follows:
 
@@ -33,12 +31,13 @@ The directory structure of this application is as follows:
     |   `-- com
     |       `-- hoho
     |           `-- usb-serial-for-android
-    |               `-- v010
+    |               `-- v0.1.0-5c8a655-inventit-0.1.0
     |-- res
     |   |-- drawable
     |   |-- drawable-hdpi
     |   |-- drawable-ldpi
     |   |-- drawable-mdpi
+    |   |-- drawable-xhdpi
     |   |-- layout
     |   `-- values
     |-- src

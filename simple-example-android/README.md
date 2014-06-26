@@ -5,7 +5,7 @@ Simple Example Android Application
 
 This application requires the following private library:
 
-- inventit-dmc-android-lib-api-4.0.0-prod.jar
+- inventit-dmc-android-lib-api-4.1.0-prod.jar
 
 You can download it via [iidn command line tool](https://github.com/inventit/iidn-cli) (signup required).
 
