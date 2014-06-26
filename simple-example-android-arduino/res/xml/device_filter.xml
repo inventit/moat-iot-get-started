@@ -6,6 +6,15 @@
     <!-- 0x2341 / Arduino -->
     <usb-device vendor-id="9025" />
 
+    <!-- 0x0d28 / NXP -->
+    <usb-device vendor-id="3368" />
+
+    <!-- 0x1357 / P&E -->
+    <usb-device vendor-id="4951" />
+
+    <!-- 0x15a2 / Freescale -->
+    <usb-device vendor-id="5538" />
+    
     <!-- 0x16C0 / 0x0483: Teensyduino  -->
     <usb-device vendor-id="5824" product-id="1155" />
 

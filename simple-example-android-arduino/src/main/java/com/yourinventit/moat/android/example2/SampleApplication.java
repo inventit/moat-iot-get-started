@@ -25,6 +25,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.hoho.android.usbserial.util.HexDump;
+import com.hoho.android.usbserial.util.SerialInputOutputManager.Listener;
 import com.yourinventit.dmc.api.moat.ContextFactory;
 import com.yourinventit.dmc.api.moat.Moat;
 
@@ -33,8 +34,7 @@ import com.yourinventit.dmc.api.moat.Moat;
  * @author dbaba@yourinventit.com
  * 
  */
-public class SampleApplication extends Activity implements
-		SerialInputOutputManager.Listener {
+public class SampleApplication extends Activity implements Listener {
 
 	/**
 	 * {@link Logger}
@@ -385,7 +385,7 @@ public class SampleApplication extends Activity implements
 		final float t = Float.valueOf(message.substring(5));
 		zigBeeDevice.setTemperature(t);
 		getZigBeeDeviceModelMapper().update(zigBeeDevice);
-		getMoat().sendNotification(
+		getMoat().sendNotificationAsync(
 				MoatIoTService.getMoatUrn(getUrnPrefix(), "ShakeEvent", "1.0"),
 				null, new Object[] { zigBeeDevice });
 		return "Temp(C):" + t + " => Notified to Server!\n";
@@ -404,7 +404,7 @@ public class SampleApplication extends Activity implements
 			return "Clicked => Last Clicked Time Has Been Updated.\n";
 		} else {
 			LOGGER.info("[performClicked] Button state changed => clicked:true");
-			getMoat().sendNotification(
+			getMoat().sendNotificationAsync(
 					MoatIoTService.getMoatUrn(getUrnPrefix(), "ShakeEvent",
 							"1.0"), null, new Object[] { zigBeeDevice });
 			return "Clicked => Notified to Server!\n";

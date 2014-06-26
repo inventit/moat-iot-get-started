@@ -5,6 +5,8 @@
  */
 package com.yourinventit.moat.android.example;
 
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,6 +17,7 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.SystemClock;
 
+import com.yourinventit.dmc.api.moat.DoneCallback;
 import com.yourinventit.dmc.api.moat.Moat;
 
 /**
@@ -96,7 +99,7 @@ public class MotionSensorListener implements SensorEventListener {
 	 * @param version
 	 * @return
 	 */
-	static String getMoatUrn(String urnPrefix, String jobServiceId,
+	private static String getMoatUrn(String urnPrefix, String jobServiceId,
 			String version) {
 		return urnPrefix + jobServiceId + ":" + version;
 	}
@@ -176,10 +179,24 @@ public class MotionSensorListener implements SensorEventListener {
 			this.motionCount++;
 			if (this.motionCount > 3) {
 				LOGGER.info("onSensorChanged => Sending the notification.");
-				this.moat.sendNotification(
-						getMoatUrn(urnPrefix, "ShakeEvent", "1.0"), null,
-						getShakeEventModelMapper().findAndRemoveAllAsArray());
-				LOGGER.info("The notification has been sent.");
+				this.moat
+						.sendNotificationAsync(
+								getMoatUrn(urnPrefix, "ShakeEvent", "1.0"),
+								null,
+								getShakeEventModelMapper()
+										.findAndRemoveAllAsArray())
+						.then(new DoneCallback<Map<String, Object>, Throwable>() {
+
+							public void onSuccess(Map<String, Object> result) {
+								LOGGER.info("The notification has been sent.");
+							}
+
+							public void onFailure(Throwable cause) {
+								LOGGER.error(
+										"The notification has NOT been sent.",
+										cause);
+							}
+						});
 			}
 		}
 	}

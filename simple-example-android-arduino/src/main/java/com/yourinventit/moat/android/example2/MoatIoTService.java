@@ -21,9 +21,10 @@ import android.os.Looper;
 import android.widget.Toast;
 
 import com.yourinventit.dmc.api.moat.ContextFactory;
+import com.yourinventit.dmc.api.moat.DoneCallback;
 import com.yourinventit.dmc.api.moat.Moat;
 import com.yourinventit.dmc.api.moat.android.MoatAndroidFactory;
-import com.yourinventit.dmc.api.moat.android.MoatAndroidFactory.Callback;
+import com.yourinventit.dmc.api.moat.android.MoatInitResult;
 
 /**
  * 
@@ -79,28 +80,28 @@ public class MoatIoTService extends Service {
 		byte[] token = null;
 		try {
 			// Loading a security token signed twice,
-			// by Service-Sync Sandbox Server and your own.
+			// by ServiceSync Sandbox Server and your own.
 			token = toByteArray(getAssets().open("moat/signed.bin"));
 		} catch (IOException e) {
 			throw new IllegalStateException(e);
 		}
 
 		// Initializing MOAT object asynchronously
-		MoatAndroidFactory.getInstance().initMoat(token, context,
-				new Callback() {
+		MoatAndroidFactory.getInstance().initMoat(token, context)
+				.then(new DoneCallback<MoatInitResult, Throwable>() {
 					/**
 					 * This method will be invoked when the initialization is
 					 * successfully terminated.
-					 * 
-					 * @see com.yourinventit.dmc.api.moat.android.MoatAndroidFactory.Callback#onInitialized(com.yourinventit.dmc.api.moat.Moat,
-					 *      java.lang.String)
 					 */
-					public void onInitialized(Moat moat, String urnPrefix) {
+					public void onSuccess(MoatInitResult result) {
 						LOGGER.info("onCreate(): OK! MOAT initialization is successful.");
 						if (databaseHelper == null) {
 							throw new IllegalStateException(
 									"Inconsistent State. Re-start the app.");
 						}
+						final Moat moat = result.getMoat();
+						final String urnPrefix = result.getUrnPrefix();
+
 						// Holding the passed moat instance
 						MoatIoTService.this.moat = moat;
 
@@ -112,10 +113,8 @@ public class MoatIoTService extends Service {
 						final ZigBeeDeviceModelMapper zigBeeDeviceModelMapper = new ZigBeeDeviceModelMapper(
 								databaseHelper.getZigBeeDeviceDao(),
 								databaseHelper.getConnectionSource());
-						moat.registerModel(
-								getMoatUrn(urnPrefix, "ZigBeeDevice", "1.0"),
-								ZigBeeDevice.class, zigBeeDeviceModelMapper,
-								contextFactory);
+						moat.registerModel(ZigBeeDevice.class,
+								zigBeeDeviceModelMapper, contextFactory);
 						ZigBeeDevice zigBeeDevice = zigBeeDeviceModelMapper
 								.findByUid(SampleApplication.ZIGBEE_DEVICE_UID);
 						if (zigBeeDevice == null) {
@@ -128,7 +127,6 @@ public class MoatIoTService extends Service {
 						SampleApplication.setUrnPrefix(urnPrefix);
 						SampleApplication
 								.setZigBeeDeviceModelMapper(zigBeeDeviceModelMapper);
-
 						LOGGER.info("onCreate(): OK. I'm ready.");
 						Looper.prepare();
 						new Handler(getMainLooper()).post(new Runnable() {
@@ -144,23 +142,23 @@ public class MoatIoTService extends Service {
 					 * This method will be invoked when unexpected exception
 					 * occurs during initialization process.
 					 * 
-					 * @see com.yourinventit.dmc.api.moat.android.MoatAndroidFactory.Callback#onThrowable(java.lang.Throwable)
+					 * @param cause
 					 */
-					public void onThrowable(final Throwable throwable) {
-						LOGGER.error("onCreate(): ERROR!!!!!!!!!!.", throwable);
+					public void onFailure(final Throwable cause) {
+						LOGGER.error("onCreate(): ERROR!!!!!!!!!!.", cause);
 						Looper.prepare();
 						new Handler(getMainLooper()).post(new Runnable() {
 							public void run() {
 								Toast.makeText(
 										getApplicationContext(),
 										"Exception Occured. Failed to initMoat!:"
-												+ throwable.getMessage(),
+												+ cause.getMessage(),
 										Toast.LENGTH_LONG).show();
 							}
 						});
 					}
-
 				});
+
 	}
 
 	/**
