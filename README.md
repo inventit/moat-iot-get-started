@@ -46,6 +46,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Change History
 
+1.1.1 : September 26, 2014
+
+* Bump up API version
+
 1.1.0 : June 26, 2014
 
 * Modifies Android sample apps as MOAT Java/Android API is updated
